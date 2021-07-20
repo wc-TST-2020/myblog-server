@@ -24,12 +24,18 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Result login(LoginDto loginDto) {
         Subject subject = SecurityUtils.getSubject();
+        // 判断用户是否已经登录过了
+        User user = (User) subject.getPrincipal();
+        if (user != null && user.getEmail().equals(loginDto.getEmail())) {
+            return Result.succ("您已经登录过了");
+        }
         try {
             subject.login(new UsernamePasswordToken(loginDto.getEmail(),loginDto.getPassword()));
         } catch (UnknownAccountException | IncorrectCredentialsException e) {
             return Result.fail(e.getMessage());
         }
-        User user = (User) subject.getPrincipal();
+        // 获取登录后的用户信息
+        user = (User) subject.getPrincipal();
         // 设置最近登录时间
         user.setLast_login(new Date());
         userService.setUserLastLogin(user.getUserid(),user.getLast_login());

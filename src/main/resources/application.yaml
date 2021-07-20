@@ -19,6 +19,6 @@ logging:
     com:
       ldy:
         myblog:
-          mapper: info
+          mapper: debug
 server:
   port: 8082
